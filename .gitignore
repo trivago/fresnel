@@ -12,6 +12,8 @@ example/*.js
 example/*.map
 # Commit dist folder to the repo to be able to access the dist folder when the package imported into the project, for more details check this link https://stackoverflow.com/a/40528869
 # dist
+dist/__test__
+dist/**/*.map
 node_modules
 npm-debug.log
 out*
