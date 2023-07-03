@@ -19,7 +19,7 @@
     "compile": "babel src --out-dir dist -s --source-maps --extensions '.ts,.tsx' --ignore src/**/__tests__",
     "kitchen-sink": "cd examples/kitchen-sink && yarn start",
     "lint": "tslint -c tslint.json --project tsconfig.json",
-    "precommit": "lint-staged",
+    "precommit": "lint-staged && yarn compile && git add dist",
     "prepush": "yarn run type-check",
     "prepublishOnly": "yarn clean && yarn compile && yarn type-declarations",
     "prettier": "prettier",
@@ -92,7 +92,7 @@
   },
   "lint-staged": {
     "*.@(ts|tsx)": [
-      "tslint -c tslint.json --fix",
+      "tslint --exclude '**/*.d.ts' -c tslint.json --fix",
       "yarn prettier-write --",
       "git add"
     ]
