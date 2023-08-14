@@ -29,8 +29,6 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? Object(arguments[i]) : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys.push.apply(ownKeys, Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
-
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
@@ -50,6 +48,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? Object(arguments[i]) : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys.push.apply(ownKeys, Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -118,6 +118,9 @@ function createMedia(config) {
         return matches[key];
       });
       var MediaContextValue = disableDynamicMediaQueries ? getMediaContextValue(onlyMatch) : getMediaContextValue((0, _Utils.intersection)(matchingMediaQueries, onlyMatch));
+      MediaContextValue = _objectSpread({}, MediaContextValue, {
+        disableDynamicMediaQueries: disableDynamicMediaQueries
+      });
       return _react.default.createElement(MediaContext.Provider, {
         value: MediaContextValue
       }, children);
@@ -164,12 +167,13 @@ function createMedia(config) {
             value: mediaParentContextValue
           }, _react.default.createElement(MediaContext.Consumer, null, function () {
             var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-                onlyMatch = _ref2.onlyMatch;
+                onlyMatch = _ref2.onlyMatch,
+                disableDynamicMediaQueries = _ref2.disableDynamicMediaQueries;
 
             var className;
 
             if (props.interaction) {
-              className = (0, _Utils.createClassName)("interaction", props.interaction);
+              className = disableDynamicMediaQueries ? "" : (0, _Utils.createClassName)("interaction", props.interaction);
             } else {
               if (props.at) {
                 var largestBreakpoint = mediaQueries.breakpoints.largestBreakpoint;
@@ -191,7 +195,7 @@ function createMedia(config) {
 
               var type = (0, _Utils.propKey)(breakpointProps);
               var breakpoint = breakpointProps[type];
-              className = (0, _Utils.createClassName)(type, breakpoint);
+              className = disableDynamicMediaQueries ? "" : (0, _Utils.createClassName)(type, breakpoint);
             }
 
             var doesMatchParent = !mediaParentContext.hasParentMedia || (0, _Utils.intersection)(mediaQueries.breakpoints.toVisibleAtBreakpointSet(mediaParentContext.breakpointProps), mediaQueries.breakpoints.toVisibleAtBreakpointSet(breakpointProps)).length > 0;

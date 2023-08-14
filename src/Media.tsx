@@ -369,11 +369,16 @@ export function createMedia<
               key => matches[key]
             )
 
-            const MediaContextValue = disableDynamicMediaQueries
+            let MediaContextValue = disableDynamicMediaQueries
               ? getMediaContextValue(onlyMatch)
               : getMediaContextValue(
                   intersection(matchingMediaQueries, onlyMatch)
                 )
+
+            MediaContextValue = {
+              ...MediaContextValue,
+              disableDynamicMediaQueries,
+            }
 
             return (
               <MediaContext.Provider value={MediaContextValue}>
@@ -427,13 +432,12 @@ export function createMedia<
             return (
               <MediaParentContext.Provider value={mediaParentContextValue}>
                 <MediaContext.Consumer>
-                  {({ onlyMatch } = {}) => {
+                  {({ onlyMatch, disableDynamicMediaQueries } = {}) => {
                     let className: string | null
                     if (props.interaction) {
-                      className = createClassName(
-                        "interaction",
-                        props.interaction
-                      )
+                      className = disableDynamicMediaQueries
+                        ? ""
+                        : createClassName("interaction", props.interaction)
                     } else {
                       if (props.at) {
                         const largestBreakpoint =
@@ -466,7 +470,9 @@ export function createMedia<
 
                       const type = propKey(breakpointProps)
                       const breakpoint = breakpointProps[type]!
-                      className = createClassName(type, breakpoint)
+                      className = disableDynamicMediaQueries
+                        ? ""
+                        : createClassName(type, breakpoint)
                     }
 
                     const doesMatchParent =
