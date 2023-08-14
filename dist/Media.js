@@ -208,8 +208,7 @@ function createMedia(config) {
             } else {
               return _react.default.createElement("div", {
                 className: "fresnel-container ".concat(className, " ").concat(passedClassName),
-                style: style,
-                suppressHydrationWarning: !renderChildren
+                style: style
               }, renderChildren ? props.children : null);
             }
           }));

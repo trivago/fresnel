@@ -500,7 +500,6 @@ export function createMedia<
                         <div
                           className={`fresnel-container ${className} ${passedClassName}`}
                           style={style}
-                          suppressHydrationWarning={!renderChildren}
                         >
                           {renderChildren ? props.children : null}
                         </div>
