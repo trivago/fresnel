@@ -3,13 +3,7 @@
 import React, { CSSProperties } from "react"
 import { createResponsiveComponents } from "./DynamicResponsive"
 import { MediaQueries } from "./MediaQueries"
-import {
-  intersection,
-  propKey,
-  createClassName,
-  castBreakpointsToIntegers,
-  memoize,
-} from "./Utils"
+import { intersection, castBreakpointsToIntegers, memoize } from "./Utils"
 import { BreakpointConstraint } from "./Breakpoints"
 
 /**
@@ -369,16 +363,11 @@ export function createMedia<
               key => matches[key]
             )
 
-            let MediaContextValue = disableDynamicMediaQueries
+            const MediaContextValue = disableDynamicMediaQueries
               ? getMediaContextValue(onlyMatch)
               : getMediaContextValue(
                   intersection(matchingMediaQueries, onlyMatch)
                 )
-
-            MediaContextValue = {
-              ...MediaContextValue,
-              disableDynamicMediaQueries,
-            }
 
             return (
               <MediaContext.Provider value={MediaContextValue}>
@@ -432,47 +421,34 @@ export function createMedia<
             return (
               <MediaParentContext.Provider value={mediaParentContextValue}>
                 <MediaContext.Consumer>
-                  {({ onlyMatch, disableDynamicMediaQueries } = {}) => {
-                    let className: string | null
-                    if (props.interaction) {
-                      className = disableDynamicMediaQueries
-                        ? ""
-                        : createClassName("interaction", props.interaction)
-                    } else {
-                      if (props.at) {
-                        const largestBreakpoint =
-                          mediaQueries.breakpoints.largestBreakpoint
-                        if (props.at === largestBreakpoint) {
-                          // TODO: We should look into making React’s __DEV__ available
-                          //       and have webpack completely compile these away.
-                          let ownerName = null
-                          try {
-                            const owner = (this as any)._reactInternalFiber
-                              ._debugOwner.type
-                            ownerName = owner.displayName || owner.name
-                          } catch (err) {
-                            // no-op
-                          }
-
-                          console.warn(
-                            "[@artsy/fresnel] " +
-                              "`at` is being used with the largest breakpoint. " +
-                              "Consider using `<Media greaterThanOrEqual=" +
-                              `"${largestBreakpoint}">\` to account for future ` +
-                              `breakpoint definitions outside of this range.${
-                                ownerName
-                                  ? ` It is being used in the ${ownerName} component.`
-                                  : ""
-                              }`
-                          )
+                  {({ onlyMatch } = {}) => {
+                    if (props.at) {
+                      const largestBreakpoint =
+                        mediaQueries.breakpoints.largestBreakpoint
+                      if (props.at === largestBreakpoint) {
+                        // TODO: We should look into making React’s __DEV__ available
+                        //       and have webpack completely compile these away.
+                        let ownerName = null
+                        try {
+                          const owner = (this as any)._reactInternalFiber
+                            ._debugOwner.type
+                          ownerName = owner.displayName || owner.name
+                        } catch (err) {
+                          // no-op
                         }
-                      }
 
-                      const type = propKey(breakpointProps)
-                      const breakpoint = breakpointProps[type]!
-                      className = disableDynamicMediaQueries
-                        ? ""
-                        : createClassName(type, breakpoint)
+                        console.warn(
+                          "[@artsy/fresnel] " +
+                            "`at` is being used with the largest breakpoint. " +
+                            "Consider using `<Media greaterThanOrEqual=" +
+                            `"${largestBreakpoint}">\` to account for future ` +
+                            `breakpoint definitions outside of this range.${
+                              ownerName
+                                ? ` It is being used in the ${ownerName} component.`
+                                : ""
+                            }`
+                        )
+                      }
                     }
 
                     const doesMatchParent =
@@ -494,16 +470,9 @@ export function createMedia<
                         ))
 
                     if (props.children instanceof Function) {
-                      return props.children(className, renderChildren)
+                      return props.children("", renderChildren)
                     } else {
-                      return (
-                        <div
-                          className={`fresnel-container ${className} ${passedClassName}`}
-                          style={style}
-                        >
-                          {renderChildren ? props.children : null}
-                        </div>
-                      )
+                      return <>{renderChildren ? props.children : null}</>
                     }
                   }}
                 </MediaContext.Consumer>
