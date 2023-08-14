@@ -404,13 +404,7 @@ export function createMedia<
 
     render() {
       const props = this.props
-      const {
-        children,
-        className: passedClassName,
-        style,
-        interaction,
-        ...breakpointProps
-      } = props
+      const { children, style, interaction, ...breakpointProps } = props
       const mediaParentContextValue = this.getMediaParentContextValue(
         breakpointProps
       )

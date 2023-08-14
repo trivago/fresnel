@@ -153,10 +153,9 @@ function createMedia(config) {
         var props = this.props;
 
         var children = props.children,
-            passedClassName = props.className,
             style = props.style,
             interaction = props.interaction,
-            breakpointProps = _objectWithoutProperties(props, ["children", "className", "style", "interaction"]);
+            breakpointProps = _objectWithoutProperties(props, ["children", "style", "interaction"]);
 
         var mediaParentContextValue = this.getMediaParentContextValue(breakpointProps);
         return _react.default.createElement(MediaParentContext.Consumer, null, function (mediaParentContext) {
